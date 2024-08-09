@@ -24,5 +24,3 @@ def scatter():
 
     # Display the plot
     plt.show()
-
-scatter()
