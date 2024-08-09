@@ -15,7 +15,7 @@ def scatter():
     plt.figure(figsize=(6.4, 4.8))
 
     # Scatter plot
-    plt.scatter(x, y, c='magenta', s=10)
+    plt.scatter(x, y, c='magenta')
 
     # Set labels name
     plt.xlabel('Height (in)')
@@ -24,3 +24,5 @@ def scatter():
 
     # Display the plot
     plt.show()
+
+scatter()
