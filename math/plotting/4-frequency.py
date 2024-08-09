@@ -12,7 +12,7 @@ def frequency():
     plt.figure(figsize=(6.4, 4.8))
 
     # Set Plot
-    plt.hist(student_grades, bins=range(0, 101, 10), edgecolor="black")
+    plt.hist(student_grades, bins=np.arange(0, 101, 10), edgecolor="black")
 
     # Set labels name
     plt.xlabel("Grades")
@@ -20,8 +20,9 @@ def frequency():
     plt.title("Project A")
 
     # Set axis limit
-    plt.xlim(0, 100)
+    plt.xticks(np.arange(0, 101, 10))
     plt.ylim(0, 30)
+    plt.xlim(0, 100)
 
     # Show plot
     plt.show()
