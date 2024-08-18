@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""
+This module implements a simple Decision Tree classifier.
+
+Classes:
+    Node: Represents a node in the decision tree,
+      which can be either a decision node or a leaf.
+    Leaf: Inherits from Node and represents a leaf in the decision tree,
+      storing the predicted value.
+    Decision_Tree: Implements a decision tree classifier
+      that supports growing a tree, calculating
+                   its depth, and making predictions.
+
+Usage:
+    This module allows for training a decision tree classifier on data,
+      and retrieving information
+    such as the depth of the tree and predictions.
+"""
+import numpy as np
+
+
+class Node:
+    """Represents a node in the decision tree."""
+    def __init__(self, feature=None, threshold=None, left_child=None,
+                 right_child=None, is_root=False, depth=0):
+        self.feature = feature
+        self.threshold = threshold
+        self.left_child = left_child
+        self.right_child = right_child
+        self.is_leaf = False
+        self.is_root = is_root
+        self.depth = depth
+
+    def max_depth_below(self):
+        """Calculates the maximum depth below this node."""
+        if self.is_leaf:
+            return self.depth
+        else:
+            return max(self.left_child.max_depth_below(),
+                       self.right_child.max_depth_below())
+
+    def count_nodes_below(self, only_leaves=False):
+        """Counts the number of nodes below this node, optionally counting only leaves."""
+        if self.is_leaf:
+            return 1
+        left_count = self.left_child.count_nodes_below(only_leaves)
+        right_count = self.right_child.count_nodes_below(only_leaves)
+        if only_leaves:
+            return left_count + right_count
+        return 1 + left_count + right_count
+
+    def __str__(self, level=0):
+        """Generates a string representation of the decision tree."""
+        indent = "    " * level
+        if self.is_leaf:
+            return f"{indent}-> leaf [value={self.value}]"
+        else:
+            result = f"{indent}node [feature={self.feature}, threshold={self.threshold}]\n"
+            result += self.left_child.__str__(level + 1) + "\n"
+            result += self.right_child.__str__(level + 1)
+            return result
+
+
+class Leaf(Node):
+    """Represents a leaf node in the decision tree."""
+    def __init__(self, value, depth=None):
+        super().__init__()
+        self.value = value
+        self.is_leaf = True
+        self.depth = depth
+
+    def __str__(self, level=0):
+        """Generates a string representation of the leaf node."""
+        indent = "    " * level
+        return f"{indent}-> leaf [value={self.value}]"
+
+
+class Decision_Tree:
+    """
+    Implements a decision tree classifier.
+    """
+    def __init__(self, max_depth=10, min_pop=1, seed=0,
+                 split_criterion="random", root=None):
+        self.rng = np.random.default_rng(seed)
+        if root:
+            self.root = root
+        else:
+            self.root = Node(is_root=True)
+        self.max_depth = max_depth
+        self.min_pop = min_pop
+
+    def depth(self):
+        """Calculates and returns the depth of the tree."""
+        return self.root.max_depth_below()
+
+    def count_nodes(self, only_leaves=False):
+        """Counts the number of nodes in the tree."""
+        return self.root.count_nodes_below(only_leaves=only_leaves)
+
+    def __str__(self):
+        """Returns a string representation of the decision tree."""
+        return str(self.root)
