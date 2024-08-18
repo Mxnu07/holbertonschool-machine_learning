@@ -38,7 +38,8 @@ class Node:
             return self.depth
         else:
             return max(
-                self.left_child.max_depth_below(), self.right_child.max_depth_below()
+                self.left_child.max_depth_below(),
+                self.right_child.max_depth_below()
             )
 
     def count_nodes_below(self, only_leaves=False):
@@ -85,10 +86,12 @@ class Node:
         """print root or node with feature and threshold
         then print left and right children"""
         if self.is_root:
-            node_text = f"root [feature={self.feature}," f" threshold={self.threshold}]"
+            node_text = f"root [feature={self.feature},"
+            f" threshold={self.threshold}]"
         else:
             node_text = (
-                f"-> node [feature={self.feature}," f" threshold={self.threshold}]"
+                f"-> node [feature={self.feature},"
+                f" threshold={self.threshold}]"
             )
 
         left_child_str = self.left_child_add_prefix(str(self.left_child))
@@ -141,7 +144,8 @@ class Decision_Tree:
         predict: method to predict the value of a data point"""
 
     def __init__(
-        self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None
+        self, max_depth=10, min_pop=1, seed=0, split_criterion="random",
+        root=None
     ):
         self.rng = np.random.default_rng(seed)
         if root:
