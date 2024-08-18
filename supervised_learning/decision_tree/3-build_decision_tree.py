@@ -48,6 +48,49 @@ class Node:
             return (1 + self.left_child.count_nodes_below() +
                     self.right_child.count_nodes_below())
 
+    def left_child_add_prefix(self, text):
+        """print the left child with the correct prefix
+        split at line breaks, add spaces, +, --, |,
+        and then join the lines back together"""
+        lines = text.split("\n")
+        new_text = "    +--"+lines[0]+"\n"
+        for x in lines[1:]:
+            new_text += ("    |  "+x)+"\n"
+        return (new_text)
+
+    def right_child_add_prefix(self, text):
+        """print the right child with the correct prefix
+        split at line breaks, add spaces, +, --, but no |
+        and then join the lines back together"""
+        lines = text.split("\n")
+        new_text = "    +--" + lines[0]
+        for x in lines[1:]:
+            new_text += "\n      " + x
+        return new_text
+
+    def __str__(self):
+        """print root or node with feature and threshold
+        then print left and right children"""
+        if self.is_root:
+            node_text = (
+                f"root [feature={self.feature},"
+                f" threshold={self.threshold}]"
+            )
+        else:
+            node_text = (
+                f"-> node [feature={self.feature},"
+                f" threshold={self.threshold}]"
+            )
+
+        left_child_str = self.left_child_add_prefix(str(self.left_child))
+        right_child_str = self.right_child_add_prefix(str(self.right_child))
+        return f"{node_text}\n{left_child_str}{right_child_str}"
+
+    def get_leaves_below(self):
+        """Get all the leaves below this node."""
+        return (self.left_child.get_leaves_below()
+                + self.right_child.get_leaves_below())
+
 
 class Leaf(Node):
     """representing a leaf in a decision tree
@@ -67,6 +110,13 @@ class Leaf(Node):
     def count_nodes_below(self, only_leaves=False):
         """Calculate the number of nodes below this node."""
         return 1
+
+    def __str__(self):
+        return (f"-> leaf [value={self.value}] ")
+
+    def get_leaves_below(self):
+        """Get all the leaves below this node."""
+        return [self]
 
 
 class Decision_Tree():
@@ -101,3 +151,11 @@ class Decision_Tree():
     def count_nodes(self, only_leaves=False):
         """Calculate the number of nodes in the decision tree."""
         return self.root.count_nodes_below(only_leaves=only_leaves)
+
+    def __str__(self):
+        """print the root node"""
+        return self.root.__str__()
+
+    def get_leaves(self):
+        """Get all the leaves in the tree."""
+        return self.root.get_leaves_below()
