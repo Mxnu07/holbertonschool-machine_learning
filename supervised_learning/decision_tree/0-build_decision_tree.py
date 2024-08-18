@@ -13,8 +13,16 @@ class Node:
         is_leaf: bool indicating if the node is a leaf
         is_root: bool indicating if the node is the root
         depth: depth of the node in the tree"""
-    def __init__(self, feature=None, threshold=None, left_child=None,
-                 right_child=None, is_root=False, depth=0):
+
+    def __init__(
+        self,
+        feature=None,
+        threshold=None,
+        left_child=None,
+        right_child=None,
+        is_root=False,
+        depth=0,
+    ):
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -29,8 +37,9 @@ class Node:
         if self.is_leaf:
             return self.depth
         else:
-            return max(self.left_child.max_depth_below(),
-                       self.right_child.max_depth_below())
+            return max(
+                self.left_child.max_depth_below(), self.right_child.max_depth_below()
+            )
 
 
 class Leaf(Node):
@@ -38,6 +47,7 @@ class Leaf(Node):
     Attributes:
         value: value to be returned when the leaf is reached
         depth: depth of the node in the tree"""
+
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -49,7 +59,7 @@ class Leaf(Node):
         return self.depth
 
 
-class Decision_Tree():
+class Decision_Tree:
     """representing a decision tree
     Attributes:
         root: root node of the decision tree
@@ -60,8 +70,10 @@ class Decision_Tree():
         seed: int for the random number generator
         split_criterion: string representing the type of split criterion
         predict: method to predict the value of a data point"""
-    def __init__(self, max_depth=10, min_pop=1, seed=0,
-                 split_criterion="random", root=None):
+
+    def __init__(
+        self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None
+    ):
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root

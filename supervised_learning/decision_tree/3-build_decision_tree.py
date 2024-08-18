@@ -13,8 +13,16 @@ class Node:
         is_leaf: bool indicating if the node is a leaf
         is_root: bool indicating if the node is the root
         depth: depth of the node in the tree"""
-    def __init__(self, feature=None, threshold=None, left_child=None,
-                 right_child=None, is_root=False, depth=0):
+
+    def __init__(
+        self,
+        feature=None,
+        threshold=None,
+        left_child=None,
+        right_child=None,
+        is_root=False,
+        depth=0,
+    ):
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -29,8 +37,9 @@ class Node:
         if self.is_leaf:
             return self.depth
         else:
-            return max(self.left_child.max_depth_below(),
-                       self.right_child.max_depth_below())
+            return max(
+                self.left_child.max_depth_below(), self.right_child.max_depth_below()
+            )
 
     def count_nodes_below(self, only_leaves=False):
         """Calculate the number of nodes below this node.
@@ -42,21 +51,25 @@ class Node:
             int representing the number of nodes below this node
         """
         if only_leaves:
-            return (self.left_child.count_nodes_below(only_leaves=True) +
-                    self.right_child.count_nodes_below(only_leaves=True))
+            return self.left_child.count_nodes_below(
+                only_leaves=True
+            ) + self.right_child.count_nodes_below(only_leaves=True)
         else:
-            return (1 + self.left_child.count_nodes_below() +
-                    self.right_child.count_nodes_below())
+            return (
+                1
+                + self.left_child.count_nodes_below()
+                + self.right_child.count_nodes_below()
+            )
 
     def left_child_add_prefix(self, text):
         """print the left child with the correct prefix
         split at line breaks, add spaces, +, --, |,
         and then join the lines back together"""
         lines = text.split("\n")
-        new_text = "    +--"+lines[0]+"\n"
+        new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += ("    |  "+x)+"\n"
-        return (new_text)
+            new_text += ("    |  " + x) + "\n"
+        return new_text
 
     def right_child_add_prefix(self, text):
         """print the right child with the correct prefix
@@ -72,14 +85,10 @@ class Node:
         """print root or node with feature and threshold
         then print left and right children"""
         if self.is_root:
-            node_text = (
-                f"root [feature={self.feature},"
-                f" threshold={self.threshold}]"
-            )
+            node_text = f"root [feature={self.feature}," f" threshold={self.threshold}]"
         else:
             node_text = (
-                f"-> node [feature={self.feature},"
-                f" threshold={self.threshold}]"
+                f"-> node [feature={self.feature}," f" threshold={self.threshold}]"
             )
 
         left_child_str = self.left_child_add_prefix(str(self.left_child))
@@ -88,8 +97,7 @@ class Node:
 
     def get_leaves_below(self):
         """Get all the leaves below this node."""
-        return (self.left_child.get_leaves_below()
-                + self.right_child.get_leaves_below())
+        return self.left_child.get_leaves_below() + self.right_child.get_leaves_below()
 
 
 class Leaf(Node):
@@ -97,6 +105,7 @@ class Leaf(Node):
     Attributes:
         value: value to be returned when the leaf is reached
         depth: depth of the node in the tree"""
+
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -112,14 +121,14 @@ class Leaf(Node):
         return 1
 
     def __str__(self):
-        return (f"-> leaf [value={self.value}] ")
+        return f"-> leaf [value={self.value}] "
 
     def get_leaves_below(self):
         """Get all the leaves below this node."""
         return [self]
 
 
-class Decision_Tree():
+class Decision_Tree:
     """representing a decision tree
     Attributes:
         root: root node of the decision tree
@@ -130,8 +139,10 @@ class Decision_Tree():
         seed: int for the random number generator
         split_criterion: string representing the type of split criterion
         predict: method to predict the value of a data point"""
-    def __init__(self, max_depth=10, min_pop=1, seed=0,
-                 split_criterion="random", root=None):
+
+    def __init__(
+        self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None
+    ):
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
