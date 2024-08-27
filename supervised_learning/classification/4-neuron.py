@@ -20,7 +20,7 @@ class Neuron:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        self.__W = np.random.randn(1, nx)  # Initialize weights using random normal distribution
+        self.__W = np.random.randn(1, nx)  # Initialize weights
         self.__b = 0  # Initialize bias to 0
         self.__A = 0  # Initialize activated output to 0
 
@@ -63,7 +63,7 @@ class Neuron:
             float: The cost of the model.
         """
         m = Y.shape[1]  # Number of examples
-        cost = - (1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))  # Cross-entropy cost
+        cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
 
     def evaluate(self, X, Y):
@@ -75,11 +75,11 @@ class Neuron:
 
         Returns:
             tuple: Tuple containing the prediction and the cost.
-                   - prediction (numpy.ndarray): Predicted labels of shape (1, m).
-                   - cost (float): Cost of the network.
+                   -prediction (numpy.ndarray):Predicted labels of shape (1, m)
+                   -cost (float): Cost of the network.
         """
-        A = self.forward_prop(X)  # Get activated output using forward propagation
-        cost = self.cost(Y, A)  # Calculate the cost using the cost function
+        A = self.forward_prop(X)
+        cost = self.cost(Y, A)
 
         # Prediction: Apply threshold of 0.5 to the activated output
         prediction = np.where(A >= 0.5, 1, 0)
