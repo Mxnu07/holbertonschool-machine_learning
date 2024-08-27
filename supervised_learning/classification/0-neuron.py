@@ -19,22 +19,6 @@ class Neuron:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        self.__W = np.random.randn(1, nx)  # Initialize the weight
-        self.__b = 0  # Initialize the bias to 0
-        self.__A = 0  # Initialize the activated output to 0
-
-
-    @property
-    def W(self):
-        """ Getter method for the weights """
-        return self.__W
-
-    @property
-    def b(self):
-        """ Getter method for the bias """
-        return self.__b
-
-    @property
-    def A(self):
-        """ Getter method for the activated output """
-        return self.__A
+        self.W = np.random.randn(1, nx)  # Initialize the weight
+        self.b = 0  # Initialize the bias to 0
+        self.A = 0  # Initialize the activated output to 0
