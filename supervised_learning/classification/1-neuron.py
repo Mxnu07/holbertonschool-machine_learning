@@ -23,18 +23,17 @@ class Neuron:
         self.__b = 0  # Initialize the bias to 0
         self.__A = 0  # Initialize the activated output to 0
 
-
     @property
     def W(self):
-        """ Getter method for the weights """
+        """Getter method for the weights"""
         return self.__W
 
     @property
     def b(self):
-        """ Getter method for the bias """
+        """Getter method for the bias"""
         return self.__b
 
     @property
     def A(self):
-        """ Getter method for the activated output """
+        """Getter method for the activated output"""
         return self.__A
