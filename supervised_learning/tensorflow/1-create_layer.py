@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Script to create a layer"""
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 def create_layer(prev, n, activation):
