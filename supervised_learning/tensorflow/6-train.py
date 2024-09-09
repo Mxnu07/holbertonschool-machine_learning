@@ -1,77 +1,45 @@
 #!/usr/bin/env python3
-"""Script to train in tensorflow"""
-
+"""trains a loaded neural network model using mini-batch
+gradient descent"""
 import tensorflow.compat.v1 as tf
+create_placeholders = __import__('0-create_placeholders').create_placeholders
+forward_prop = __import__('2-forward_prop').forward_prop
+calculate_accuracy = __import__('3-calculate_accuracy').calculate_accuracy
+calculate_loss = __import__('4-calculate_loss').calculate_loss
+create_train_op = __import__('5-create_train_op').create_train_op
 
-calculate_accuracy = __import__("3-calculate_accuracy").calculate_accuracy
-calculate_loss = __import__("4-calculate_loss").calculate_loss
-create_placeholders = __import__("0-create_placeholders").create_placeholders
-create_train_op = __import__("5-create_train_op").create_train_op
-forward_prop = __import__("2-forward_prop").forward_prop
 
-
-def train(
-    X_train,
-    Y_train,
-    X_valid,
-    Y_valid,
-    layer_sizes,
-    activations,
-    alpha,
-    iterations,
-    save_path="/tmp/model.ckpt",
-):
-    """
-
-    Args:
-        X_train: training input data (nparray)
-        Y_train: training labels data (nparray)
-        X_valid: validation input data (nparray)
-        Y_valid: validation labels data (nparray)
-        layer_sizes: Number of nodes in each layer (list)
-        activations: Activation function in each layer (list)
-        alpha: learning rate
-        iterations: iteration number in the model
-        save_path: path in which the model is saved
-
-    Returns: Model trained in .ckpt extension
-
-    """
-
-    # tensors for input
-    x, y = create_placeholders(X_train.shape[1], Y_train.shape[1])
-    # build graph collection
-    tf.add_to_collection("x", x)
-    tf.add_to_collection("y", y)
+def train(X_train, Y_train, X_valid, Y_valid, layer_sizes, activations,
+          alpha, iterations, save_path="/tmp/model.ckpt"):
+    """X_train is a numpy.ndarray containing the training input data"""
+    m, nx = X_train.shape
+    classes = Y_train.shape[1]
+    x, y = create_placeholders(nx, classes)
     y_pred = forward_prop(x, layer_sizes, activations)
-    tf.add_to_collection("y_pred", y_pred)
     loss = calculate_loss(y, y_pred)
-    tf.add_to_collection("loss", loss)
     accuracy = calculate_accuracy(y, y_pred)
-    tf.add_to_collection("accuracy", accuracy)
-    # build train and add to graph collection
     train_op = create_train_op(loss, alpha)
-    tf.add_to_collection("train_op", train_op)
-
-    # set global initializer
-    init = tf.global_variables_initializer()
-    # create saver
+    init_op = tf.global_variables_initializer()
     saver = tf.train.Saver()
-    # launch the graph and train saving the model every 100 ops
-    sess = tf.Session()
-    sess.run(init)
-    # Using the context manager
-    for step in range(iterations + 1):
-        t_cost = sess.run(loss, feed_dict={x: X_train, y: Y_train})
-        t_acc = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
-        v_cost = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
-        v_acc = sess.run(accuracy, feed_dict={x: X_valid, y: Y_valid})
-        if step % 100 == 0 or step == iterations:
-            print("After {} iterations:".format(step))
-            print("\tTraining Cost: {}".format(t_cost))
-            print("\tTraining Accuracy: {}".format(t_acc))
-            print("\tValidation Cost: {}".format(v_cost))
-            print("\tValidation Accuracy: {}".format(v_acc))
-        if step < iterations:
-            sess.run(train_op, feed_dict={x: X_train, y: Y_train})
-    return saver.save(sess, save_path)
+    with tf.Session() as sess:
+        sess.run(init_op)
+        tf.add_to_collection("x", x)
+        tf.add_to_collection("y", y)
+        tf.add_to_collection("y_pred", y_pred)
+        tf.add_to_collection("accuracy", accuracy)
+        tf.add_to_collection("loss", loss)
+        tf.add_to_collection("train_op", train_op)
+        for i in range(iterations + 1):
+            loss_t, acc_t = sess.run([loss, accuracy],
+                                     feed_dict={x: X_train, y: Y_train})
+            loss_v, acc_v = sess.run([loss, accuracy],
+                                     feed_dict={x: X_valid, y: Y_valid})
+            if i % 100 == 0 or i == iterations:
+                print("After {} iterations:".format(i))
+                print("\tTraining Cost: {}".format(loss_t))
+                print("\tTraining Accuracy: {}".format(acc_t))
+                print("\tValidation Cost: {}".format(loss_v))
+                print("\tValidation Accuracy: {}".format(acc_v))
+            if i < iterations:
+                sess.run(train_op, feed_dict={x: X_train, y: Y_train})
+        return saver.save(sess, save_path)
