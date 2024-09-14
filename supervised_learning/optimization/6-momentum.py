@@ -4,7 +4,7 @@
 import tensorflow as tf
 
 
-def create_momentum_op(loss, alpha, beta1):
+def create_momentum_op(alpha, beta1):
     """
     Function to train a DNN with TF momentum optimization
     Args:
@@ -15,5 +15,5 @@ def create_momentum_op(loss, alpha, beta1):
     Returns: momentum optimization operation
 
     """
-    optimizer = tf.train.MomentumOptimizer(alpha, beta1).minimize(loss)
+    optimizer = tf.train.MomentumOptimizer(alpha, beta1)
     return optimizer
