@@ -4,16 +4,9 @@
 import tensorflow as tf
 
 
-def create_momentum_op(alpha, beta1):
-    """
-    Function to train a DNN with TF momentum optimization
-    Args:
-        loss: loss of the network
-        alpha: learning rate
-        beta1: momentum weight
-
-    Returns: momentum optimization operation
-
-    """
-    optimizer = tf.train.MomentumOptimizer(alpha, beta1)
-    return optimizer
+def create_momentum_op(loss, alpha, beta1):
+    """function that implements momentum gradient descent in tensorflow"""
+    return tf.train.MomentumOptimizer(
+        learning_rate=alpha, momentum=beta1, use_locking=False,
+        name='Momentum', use_nesterov=False
+    ).minimize(loss)
