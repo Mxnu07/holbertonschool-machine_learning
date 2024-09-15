@@ -7,30 +7,35 @@ import tensorflow as tf
 
 def create_batch_norm_layer(prev, n, activation):
     """
-    Function that normalized a batch in a DNN with Tf
-    Args:
-        prev: the activated output of the previous layer
-        n: number of nodes in the layer to be created
-        activation: activation function that should be used
-                    on the output of the layer
+    Creates a batch normalization layer for a neural network in TensorFlow.
 
-    Returns: tensor of the activated output for the layer
+    Parameters:
+    - prev: activated output of the previous layer.
+    - n: number of nodes in the layer to be created.
+    - activation: activation function to be applied after batch normalization.
 
+    Returns:
+    - A tensor of the activated output for the layer.
     """
-    init = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    x = tf.layers.Dense(units=n, activation=None, kernel_initializer=init)
-    x_prev = x(prev)
-    scale = tf.Variable(tf.constant(1.0, shape=[n]), name='gamma')
-    mean, variance = tf.nn.moments(x_prev, axes=[0])
-    offset = tf.Variable(tf.constant(0.0, shape=[n]), name='beta')
-    variance_epsilon = 1e-8
+    # Define kernel initializer
+    init = tf.keras.initializers.VarianceScaling(mode='fan_avg')
 
-    normalization = tf.nn.batch_normalization(
-        x_prev,
-        mean,
-        variance,
-        offset,
-        scale,
-        variance_epsilon,
-    )
-    return activation(normalization)
+    # Create Dense layer
+    dense = tf.keras.layers.Dense(units=n, kernel_initializer=init)(prev)
+
+    # Create Batch Normalization layer
+    batch_norm = tf.keras.layers.BatchNormalization(
+        axis=-1,   # Apply normalization along the last axis (the feature axis)
+        momentum=0.99, 
+        epsilon=1e-7, 
+        beta_initializer=tf.keras.initializers.Zeros(),  # Initialize beta to 0
+        gamma_initializer=tf.keras.initializers.Ones()   # Initialize gamma to 1
+    )(dense)
+
+    # Apply the activation function
+    if activation:
+        output = activation(batch_norm)
+    else:
+        output = batch_norm
+
+    return output

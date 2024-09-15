@@ -4,21 +4,18 @@
 import tensorflow as tf
 
 
-def create_Adam_op(loss, alpha, beta1, beta2, epsilon):
+def create_Adam_op(alpha, beta1, beta2, epsilon):
     """
-    Function to train a DNN with TF RMSProp optimization
-    Args:
-        loss: loss of the network
-        alpha: learning rate
-        beta1: weight used for the first moment
-        beta2: weight used for the second moment
-        epsilon: small number to avoid division by zero
+    Creates an Adam optimization operation.
 
-    Returns: Adam optimization operation
+    Parameters:
+    - alpha: learning rate (float).
+    - beta1: weight for the first moment (float).
+    - beta2: weight for the second moment (float).
+    - epsilon: small number to avoid division by zero (float).
 
+    Returns:
+    - optimizer: a TensorFlow Adam optimizer.
     """
-    optimizer = tf.train.AdamOptimizer(alpha,
-                                       beta1,
-                                       beta2,
-                                       epsilon).minimize(loss)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=alpha, beta_1=beta1, beta_2=beta2, epsilon=epsilon)
     return optimizer

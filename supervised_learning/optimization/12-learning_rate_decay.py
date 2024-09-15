@@ -4,19 +4,22 @@
 import tensorflow as tf
 
 
-def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
+def learning_rate_decay(alpha, decay_rate, decay_step):
     """
-    learning rate decay operation in tensorflow using inverse time decay:
-    Args:
-        alpha: original learning rate
-        decay_rate: weight used to determine the rate at which alpha will decay
-        global_step: number of passes of gradient descent that have elapsed
-        decay_step: number of passes of gradient descent that should occur
-                    before alpha is decayed further
+    Creates a learning rate decay operation using inverse time decay.
 
-    Returns:  learning rate decay operation
+    Parameters:
+    - alpha: original learning rate (float).
+    - decay_rate: rate at which the learning rate decays (float).
+    - decay_step: number of steps before each decay (int).
 
+    Returns:
+    - learning rate decay operation: a TensorFlow learning rate schedule.
     """
-    LRD = tf.train.inverse_time_decay(alpha, global_step, decay_step,
-                                      decay_rate, staircase=True)
-    return LRD
+    lr_schedule = tf.keras.optimizers.schedules.InverseTimeDecay(
+        initial_learning_rate=alpha,
+        decay_steps=decay_step,
+        decay_rate=decay_rate,
+        staircase=True
+    )
+    return lr_schedule
