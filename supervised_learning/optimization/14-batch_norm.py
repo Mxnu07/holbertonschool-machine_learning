@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
-"""Script to create a batch normalization layer in a DNN using TensorFlow"""
-
 import tensorflow as tf
+
+# Set random seed for reproducibility
+tf.random.set_seed(0)
 
 
 def create_batch_norm_layer(prev, n, activation):
@@ -28,8 +28,8 @@ def create_batch_norm_layer(prev, n, activation):
         momentum=0.99,
         epsilon=1e-7,
         beta_initializer=tf.keras.initializers.Zeros(),  # Init beta to 0
-        gamma_initializer=tf.keras.initializers.Ones(),  # Init gamma to 1
-    )(dense)
+        gamma_initializer=tf.keras.initializers.Ones()   # Init gamma to 1
+    )(dense, training=True)  # Make sure to set training=True
 
     # Apply the activation function after batch normalization
     if activation is not None:
