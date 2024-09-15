@@ -4,8 +4,6 @@
 import tensorflow as tf
 
 
-import tensorflow as tf
-
 def create_momentum_op(alpha, beta1):
     """
     Creates a momentum optimization operation.
