@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Script to create a batch normalization layer in a DNN
-    using tensorflow"""
+"""Script to create a batch normalization layer in a DNN using TensorFlow"""
 
 import tensorflow as tf
 
@@ -25,15 +24,15 @@ def create_batch_norm_layer(prev, n, activation):
 
     # Create Batch Normalization layer
     batch_norm = tf.keras.layers.BatchNormalization(
-        axis=-1,  # Apply normalization along the last axis(the feature axis)
+        axis=-1,  # Apply normalization along the last axis (feature axis)
         momentum=0.99,
         epsilon=1e-7,
         beta_initializer=tf.keras.initializers.Zeros(),  # Init beta to 0
         gamma_initializer=tf.keras.initializers.Ones(),  # Init gamma to 1
     )(dense)
 
-    # Apply the activation function
-    if activation:
+    # Apply the activation function after batch normalization
+    if activation is not None:
         output = activation(batch_norm)
     else:
         output = batch_norm
