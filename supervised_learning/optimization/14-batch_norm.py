@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+"""Script to create a batch normalization layer in a DNN using TensorFlow"""
+
 import tensorflow as tf
 
 # Set random seed for reproducibility
 tf.random.set_seed(0)
-
 
 def create_batch_norm_layer(prev, n, activation):
     """
