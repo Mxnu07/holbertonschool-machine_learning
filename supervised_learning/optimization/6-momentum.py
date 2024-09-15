@@ -4,9 +4,18 @@
 import tensorflow as tf
 
 
-def create_momentum_op(loss, alpha, beta1):
-    """function that implements momentum gradient descent in tensorflow"""
-    return tf.train.MomentumOptimizer(
-        learning_rate=alpha, momentum=beta1, use_locking=False,
-        name='Momentum', use_nesterov=False
-    ).minimize(loss)
+import tensorflow as tf
+
+def create_momentum_op(alpha, beta1):
+    """
+    Creates a momentum optimization operation.
+
+    Parameters:
+    - alpha: learning rate (float).
+    - beta1: momentum weight (float).
+
+    Returns:
+    - optimizer: a TensorFlow momentum optimizer.
+    """
+    optimizer = tf.keras.optimizers.SGD(learning_rate=alpha, momentum=beta1)
+    return optimizer
