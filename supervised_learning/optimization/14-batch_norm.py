@@ -6,6 +6,7 @@ import tensorflow as tf
 # Set random seed for reproducibility
 tf.random.set_seed(0)
 
+
 def create_batch_norm_layer(prev, n, activation):
     """
     Creates a batch normalization layer for a neural network in TensorFlow.
