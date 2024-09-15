@@ -29,7 +29,7 @@ def create_batch_norm_layer(prev, n, activation):
         momentum=0.99, 
         epsilon=1e-7, 
         beta_initializer=tf.keras.initializers.Zeros(),  # Initialize beta to 0
-        gamma_initializer=tf.keras.initializers.Ones()   # Initialize gamma to 1
+        gamma_initializer=tf.keras.initializers.Ones()  # Initialize gamma to 1
     )(dense)
 
     # Apply the activation function
