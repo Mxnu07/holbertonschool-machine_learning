@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-'''Create a Layer with Dropout '''
+'''Create a Layer with Dropout'''
 
 import tensorflow as tf
-
 
 def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     """
@@ -22,12 +21,10 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     initializer = tf.keras.initializers.VarianceScaling(scale=2.0, mode='fan_avg')
 
     # Dense layer creation
-    layer = tf.keras.layers.Dense(units=n, activation=activation, kernel_initializer=initializer)(prev)
+    layer = tf.keras.layers.Dense(units=n, activation=activation,
+                                  kernel_initializer=initializer)(prev)
 
-    # Apply dropout only during training
-    if training:
-        output = tf.keras.layers.Dropout(rate=1 - keep_prob)(layer)
-    else:
-        output = layer
+    # Apply dropout conditionally based on whether the model is in training mode
+    output = tf.keras.layers.Dropout(rate=1 - keep_prob)(layer, training=training)
 
     return output
