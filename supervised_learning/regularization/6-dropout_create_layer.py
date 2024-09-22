@@ -18,13 +18,15 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     output -- the output of the new layer with dropout applied
     """
     # L2 regularization using variance scaling initializer
-    initializer = tf.keras.initializers.VarianceScaling(scale=2.0, mode='fan_avg')
+    initializer = tf.keras.initializers.VarianceScaling(scale=2.0,
+                                                        mode='fan_avg')
 
     # Dense layer creation
     layer = tf.keras.layers.Dense(units=n, activation=activation,
                                   kernel_initializer=initializer)(prev)
 
-    # Apply dropout conditionally based on whether the model is in training mode
-    output = tf.keras.layers.Dropout(rate=1 - keep_prob)(layer, training=training)
+    # Apply dropout conditionally based on whether the model in training mode
+    output = tf.keras.layers.Dropout(rate=1 - keep_prob)(layer,
+                                                         training=training)
 
     return output
