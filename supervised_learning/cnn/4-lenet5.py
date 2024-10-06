@@ -12,58 +12,53 @@ tf.disable_eager_execution()  # Disable eager execution for TensorFlow v1
 
 def lenet5(x, y):
     """
-    Builds a modified version of the LeNet-5 architecture using tensorflow:
-        x is a tf.placeholder of shape (m, 28, 28, 1) containing the input
-        images for the network
-        m is the number of images
-    y is a tf.placeholder of shape (m, 10) containing the one-hot labels for
-        the network
-    The model consist of the following layers in order:
-        Convolutional layer with 6 kernels of shape 5x5 with same padding
-        Max pooling layer with kernels of shape 2x2 with 2x2 strides
-        Convolutional layer with 16 kernels of shape 5x5 with valid padding
-        Max pooling layer with kernels of shape 2x2 with 2x2 strides
-        Fully connected layer with 120 nodes
-        Fully connected layer with 84 nodes
-        Fully connected softmax output layer with 10 nodes
-    All layers requiring initialization, initialize their kernels with the
-        he_normal initialization method:
-        tf.contrib.layers.variance_scaling_initializer()
-    All hidden layers requiring activation use the relu activation function
-    Returns:
+    Builds a modified version of LeNet-5 architecture using TensorFlow
+
+    parameters:
+        x [tf.placeholder of shape (m, 28, 28, 1)]:
+            contains the input images for the network
+            m: number of images
+        y [tf.placeholder of shape (m, 10)]:
+            contains the one-hot labels for the network
+
+    returns:
         a tensor for the softmax activated output
-        a training operation that utilizes Adam optimization (with default
-            hyperparameters)
-        a tensor for the loss of the netowrk
+        a training operation that utilizes Adam optimization
+            (default hyperparameters)
+        a tensor for the loss of the network
         a tensor for the accuracy of the network
     """
 
-    init = tf.contrib.layers.variance_scaling_initializer()
+    # C1: Convolutional layer (6 kernels, 5x5, same padding)
+    conv1 = tf.layers.conv2d(x, filters=6, kernel_size=5, padding='same', activation=tf.nn.relu)
 
-    conv_1 = tf.layers.Conv2D(filters=6, kernel_size=5, padding='same',
-                              activation=tf.nn.relu,
-                              kernel_initializer=init)(x)
-    pool_1 = tf.layers.MaxPooling2D(2, 2)(conv_1)
+    # P2: Max pooling layer (2x2 kernels, 2x2 strides)
+    pool1 = tf.layers.max_pooling2d(conv1, pool_size=2, strides=2)
 
-    conv_2 = tf.layers.Conv2D(filters=16, kernel_size=5, padding='valid',
-                              activation=tf.nn.relu,
-                              kernel_initializer=init)(pool_1)
-    pool_2 = tf.layers.MaxPooling2D(2, 2)(conv_2)
+    # C3: Convolutional layer (16 kernels, 5x5, valid padding)
+    conv2 = tf.layers.conv2d(pool1, filters=16, kernel_size=5, padding='valid', activation=tf.nn.relu)
 
-    flatten = tf.layers.Flatten()(pool_2)
+    # P4: Max pooling layer (2x2 kernels, 2x2 strides)
+    pool2 = tf.layers.max_pooling2d(conv2, pool_size=2, strides=2)
 
-    dense_1 = tf.layers.Dense(units=120, activation=tf.nn.relu,
-                              kernel_initializer=init)(flatten)
-    dense_2 = tf.layers.Dense(units=84, kernel_initializer=init,
-                              activation=tf.nn.relu)(dense_1)
-    dense_3 = tf.layers.Dense(units=10,
-                              kernel_initializer=init)(dense_2)
-    softmax = tf.nn.softmax(dense_3)
+    # Flatten the output
+    flatten = tf.layers.flatten(pool2)
 
-    loss = tf.losses.softmax_cross_entropy(y, dense_3)
-    train_op = tf.train.AdamOptimizer().minimize(loss)
+    # F5: Fully connected layer (120 nodes)
+    fc1 = tf.layers.dense(flatten, units=120, activation=tf.nn.relu)
 
-    equality = tf.equal(tf.argmax(dense_3, 1), tf.argmax(y, 1))
-    acc = tf.reduce_mean(tf.cast(equality, tf.float32))
+    # F6: Fully connected layer (84 nodes)
+    fc2 = tf.layers.dense(fc1, units=84, activation=tf.nn.relu)
 
-    return softmax, train_op, loss, acc
+    # F7: Fully connected softmax output layer (10 nodes)
+    logits = tf.layers.dense(fc2, units=10)
+
+    # Loss and optimizer
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=y))
+    optimizer = tf.compat.v1.train.AdamOptimizer().minimize(loss)
+
+    # Accuracy
+    correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+    return logits, optimizer, loss, accuracy
