@@ -40,8 +40,8 @@ def lenet5(x, y):
 
     # C3: Convolutional layer (16 kernels, 5x5, valid padding)
     conv2 = tf.layers.conv2d(
-        pool1, filters=16, kernel_size=5, padding="valid", activation=tf.nn.relu
-    )
+        pool1, filters=16, kernel_size=5, padding="valid",
+        activation=tf.nn.relu)
 
     # P4: Max pooling layer (2x2 kernels, 2x2 strides)
     pool2 = tf.layers.max_pooling2d(conv2, pool_size=2, strides=2)
