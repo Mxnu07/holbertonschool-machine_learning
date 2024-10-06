@@ -31,13 +31,17 @@ def lenet5(x, y):
     """
 
     # C1: Convolutional layer (6 kernels, 5x5, same padding)
-    conv1 = tf.layers.conv2d(x, filters=6, kernel_size=5, padding='same', activation=tf.nn.relu)
+    conv1 = tf.layers.conv2d(
+        x, filters=6, kernel_size=5, padding="same", activation=tf.nn.relu
+    )
 
     # P2: Max pooling layer (2x2 kernels, 2x2 strides)
     pool1 = tf.layers.max_pooling2d(conv1, pool_size=2, strides=2)
 
     # C3: Convolutional layer (16 kernels, 5x5, valid padding)
-    conv2 = tf.layers.conv2d(pool1, filters=16, kernel_size=5, padding='valid', activation=tf.nn.relu)
+    conv2 = tf.layers.conv2d(
+        pool1, filters=16, kernel_size=5, padding="valid", activation=tf.nn.relu
+    )
 
     # P4: Max pooling layer (2x2 kernels, 2x2 strides)
     pool2 = tf.layers.max_pooling2d(conv2, pool_size=2, strides=2)
@@ -55,7 +59,9 @@ def lenet5(x, y):
     logits = tf.layers.dense(fc2, units=10)
 
     # Loss and optimizer
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=y))
+    loss = tf.reduce_mean(
+        tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=y)
+    )
     optimizer = tf.compat.v1.train.AdamOptimizer().minimize(loss)
 
     # Accuracy
