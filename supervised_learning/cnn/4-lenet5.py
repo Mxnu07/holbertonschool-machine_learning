@@ -8,6 +8,7 @@ import tensorflow.compat.v1 as tf
 
 
 tf.disable_eager_execution()  # Disable eager execution for TensorFlow v1
+tf.set_random_seed(0)  # Set random seed for reproducibility
 
 
 def lenet5(x, y):
