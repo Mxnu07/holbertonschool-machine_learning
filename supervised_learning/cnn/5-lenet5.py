@@ -7,9 +7,13 @@ using Keras
 from tensorflow import keras as K
 
 
-def lenet5():
+def lenet5(X):
     """
     Builds a modified version of LeNet-5 architecture using Keras
+
+    parameters:
+        X [K.Input of shape (m, 28, 28, 1)]:
+            contains the input images for the network
 
     model layers:
     C1: convolutional layer with 6 kernels of shape (5, 5) with same padding
@@ -27,8 +31,6 @@ def lenet5():
         K.Model compiled to use Adam optimization (default hyperparameters)
             and accuracy metrics
     """
-    # Input layer for images of size 28x28 with 1 color channel
-    X = K.Input(shape=(28, 28, 1))
 
     # C1: Convolutional layer (6 filters of 5x5, same padding)
     C1 = K.layers.Conv2D(
