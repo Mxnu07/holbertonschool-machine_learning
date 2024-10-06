@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Deep CNNs """
-import tensorflow.keras as K
+from tensorflow import keras as K
 inception_block = __import__('0-inception_block').inception_block
 
 

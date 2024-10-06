@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Deep CNNs """
 
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def inception_block(A_prev, filters):
