@@ -4,7 +4,6 @@ Defines a function that builds a modified version of LeNet-5 architecture
 using Keras
 """
 
-
 from tensorflow import keras as K
 
 
