@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ 0x09 Tranfer Learning"""
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def preprocess_data(X, Y):
