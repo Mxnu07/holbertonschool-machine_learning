@@ -25,66 +25,86 @@ class Node:
         self.depth = depth
 
     def max_depth_below(self):
-        """Calculate the maximum depth below the current node."""
+        """calculate the maximum depth below the current node"""
         if self.is_leaf:
             return self.depth
-        return max(self.left_child.max_depth_below(),
-                   self.right_child.max_depth_below())
+        else:
+            return max(self.left_child.max_depth_below(),
+                       self.right_child.max_depth_below())
 
     def count_nodes_below(self, only_leaves=False):
         """Calculate the number of nodes below this node.
 
         Args:
-            only_leaves: bool indicating if only leaves should be counted
+        only_leaves: bool indicating if only leaves should be counted
 
         Returns:
             int representing the number of nodes below this node
         """
-        if self.is_leaf:
-            return 1 if only_leaves else 0
-        return (self.left_child.count_nodes_below(only_leaves) +
-                self.right_child.count_nodes_below(only_leaves) +
-                (0 if only_leaves else 1))
+        if only_leaves:
+            return (self.left_child.count_nodes_below(only_leaves=True) +
+                    self.right_child.count_nodes_below(only_leaves=True))
+        else:
+            return (1 + self.left_child.count_nodes_below() +
+                    self.right_child.count_nodes_below())
 
     def left_child_add_prefix(self, text):
-        """Print the left child with the correct prefix."""
+        """print the left child with the correct prefix
+        split at line breaks, add spaces, +, --, |,
+        and then join the lines back together"""
         lines = text.split("\n")
-        return "\n".join(["    +--" + lines[0]] +
-                         ["    |  " + line for line in lines[1:]]) + "\n"
+        new_text = "    +--"+lines[0]+"\n"
+        for x in lines[1:]:
+            new_text += ("    |  "+x)+"\n"
+        return (new_text)
 
     def right_child_add_prefix(self, text):
-        """Print the right child with the correct prefix."""
+        """print the right child with the correct prefix
+        split at line breaks, add spaces, +, --, but no |
+        and then join the lines back together"""
         lines = text.split("\n")
-        return "\n".join(["    +--" + lines[0]] +
-                         ["      " + line for line in lines[1:]])
+        new_text = "    +--" + lines[0]
+        for x in lines[1:]:
+            new_text += "\n      " + x
+        return new_text
 
     def __str__(self):
-        """Print root or node with feature and threshold, then its children."""
-        node_text = (f"root [feature={self.feature}, threshold={self.threshold}]"
-                     if self.is_root else
-                     f"-> node [feature={self.feature}, threshold={self.threshold}]")
-        return f"{node_text}\n{self.left_child_add_prefix(str(self.left_child))}{self.right_child_add_prefix(str(self.right_child))}"
+        """print root or node with feature and threshold
+        then print left and right children"""
+        if self.is_root:
+            node_text = (
+                f"root [feature={self.feature},"
+                f" threshold={self.threshold}]"
+            )
+        else:
+            node_text = (
+                f"-> node [feature={self.feature},"
+                f" threshold={self.threshold}]"
+            )
+
+        left_child_str = self.left_child_add_prefix(str(self.left_child))
+        right_child_str = self.right_child_add_prefix(str(self.right_child))
+        return f"{node_text}\n{left_child_str}{right_child_str}"
 
     def get_leaves_below(self):
         """Get all the leaves below this node."""
-        if self.is_leaf:
-            return [self]
         return (self.left_child.get_leaves_below() +
                 self.right_child.get_leaves_below())
 
 
 class Leaf(Node):
-    """Representing a leaf in a decision tree.
+    """representing a leaf in a decision tree
     Attributes:
         value: value to be returned when the leaf is reached
         depth: depth of the node in the tree"""
     def __init__(self, value, depth=None):
-        super().__init__(depth=depth)
+        super().__init__()
         self.value = value
         self.is_leaf = True
+        self.depth = depth
 
     def max_depth_below(self):
-        """Calculate the maximum depth below the current node."""
+        """calculate the maximum depth below the current node"""
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
@@ -92,15 +112,15 @@ class Leaf(Node):
         return 1
 
     def __str__(self):
-        return f"-> leaf [value={self.value}]"
+        return (f"-> leaf [value={self.value}] ")
 
     def get_leaves_below(self):
         """Get all the leaves below this node."""
         return [self]
 
 
-class DecisionTree:
-    """Representing a decision tree.
+class Decision_Tree():
+    """representing a decision tree
     Attributes:
         root: root node of the decision tree
         explanatory: numpy.ndarray of shape (m, n) containing the input data
@@ -113,7 +133,10 @@ class DecisionTree:
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
-        self.root = root if root else Node(is_root=True)
+        if root:
+            self.root = root
+        else:
+            self.root = Node(is_root=True)
         self.explanatory = None
         self.target = None
         self.max_depth = max_depth
@@ -122,7 +145,7 @@ class DecisionTree:
         self.predict = None
 
     def depth(self):
-        """Calculate the depth of the decision tree."""
+        """calculate the depth of the decision tree"""
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
@@ -130,8 +153,8 @@ class DecisionTree:
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
-        """Print the root node."""
-        return str(self.root)
+        """print the root node"""
+        return self.root.__str__()
 
     def get_leaves(self):
         """Get all the leaves in the tree."""
