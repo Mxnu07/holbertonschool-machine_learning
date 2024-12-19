@@ -88,7 +88,7 @@ class Node:
 
     def get_leaves_below(self):
         """Get all the leaves below this node."""
-        return (self.left_child.get_leaves_below()
+        return (self.left_child.get_leaves_below() 
                 + self.right_child.get_leaves_below())
 
 
