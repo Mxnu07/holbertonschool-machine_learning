@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import tensorflow.compat.v1 as tf
+""" LeNet-5 architecture using tensorflow """
+
 
 
 def lenet5(x, y):
