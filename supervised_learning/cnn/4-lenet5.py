@@ -5,6 +5,7 @@ import tensorflow.compat.v1 as tf
 
 
 def lenet5(x, y):
+    """ Function that builds a modified version of the LeNet-5 architecture"""
     initializer = tf.keras.initializers.VarianceScaling(scale=2.0)
 
     # 1. First Convolutional Layer
