@@ -1,63 +1,60 @@
 #!/usr/bin/env python3
-""" 0x09 Tranfer Learning"""
+"""This module trains a CNN to clasiffy CIFRAR10 data set
+# using transfer learning using efficient B7"""
+
 from tensorflow import keras as K
 
 
 def preprocess_data(X, Y):
-    """
-    Pre-processes the data for your model:
-    X is a numpy.ndarray of shape (m, 32, 32, 3) containing the CIFAR 10 data,
-        where m is the number of data points
-    Y is a numpy.ndarray of shape (m,) containing the CIFAR 10 labels for X
-    Returns: X_p, Y_p
-    X_p is a numpy.ndarray containing the preprocessed X
-    Y_p is a numpy.ndarray containing the preprocessed Y
-    """
+    X_p = K.applications.efficientnet.preprocess_input(X)
+    Y_p = K.utils.to_categorical(Y, 10)
+    return X_p, Y_p
 
-    X = X.astype('float32')
-    X /= 255
-    Y = K.utils.to_categorical(Y, 10)
-    return X, Y
+# Load the CIFAR-10 dataset
+(x_train, y_train), (x_test, y_test) = K.datasets.cifar10.load_data()
 
+# Preprocess the data
+x_train, y_train = preprocess_data(x_train, y_train)
+x_test, y_test = preprocess_data(x_test, y_test)
 
-if __name__ == '__main__':
-    (x_train, y_train), (x_test, y_test) = K.datasets.cifar10.load_data()
-    x_train, y_train = preprocess_data(x_train, y_train)
-    x_test, y_test = preprocess_data(x_test, y_test)
+# Load the pre-trained EfficientNet-B0 model
+base_model = K.applications.EfficientNetB0(include_top=False, weights='imagenet', input_shape=(224, 224, 3))
 
-    base_model = K.applications.vgg16.VGG16(include_top=False, weights='imagenet',
-                                            pooling='avg',
-                                            classes=y_train.shape[1])
+# Add a lambda layer to scale up the image size
+model = K.models.Sequential()
+model.add(K.layers.Lambda(lambda image: K.backend.resize_images(image, 7, 7, 'channels_last'), input_shape=(32, 32, 3)))
+model.add(base_model)
 
-    model = K.Sequential()
-    model.add(K.layers.UpSampling2D())
-    model.add(base_model)
-    model.add(K.layers.Flatten())
-    model.add(K.layers.Dense(256, activation=('relu')))
-    model.add(K.layers.Dropout(0.5))
-    model.add(K.layers.Dense(256, activation=('relu')))
-    model.add(K.layers.Dropout(0.5))
-    model.add(K.layers.Dense(10, activation=('softmax')))
-    callback = []
+# Unfreeze the last few layers of the pre-trained model
+for layer in base_model.layers[:-5]:
+    layer.trainable = False
 
+# Add a dense layer for the output
+model.add(K.layers.GlobalAveragePooling2D())
+model.add(K.layers.Dense(10, activation='softmax'))
 
-    def rate_decay(epoch):
-        """ Decay for learning rate """
-        return 0.001 / (1 + 1 * 30)
+# Compile the model
+learning_rate_schedule = K.optimizers.schedules.ExponentialDecay(
+    initial_learning_rate=1e-4,
+    decay_steps=10000,
+    decay_rate=0.9)
+model.compile(optimizer=K.optimizers.Adam(learning_rate=learning_rate_schedule),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
 
+# Add data augmentation
+data_augmentation = K.preprocessing.image.ImageDataGenerator(
+    rotation_range=15,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    horizontal_flip=True)
+data_augmentation.fit(x_train)
 
-    learning = K.callbacks.LearningRateScheduler(schedule=rate_decay, verbose=1)
-    callback.append(learning)
-    callback.append(K.callbacks.ModelCheckpoint('cifar10.h5',
-                                                monitor='val_accuracy',
-                                                save_best_only=True,
-                                                mode='max'))
+# Train the model
+model.fit(data_augmentation.flow(x_train, y_train, batch_size=64),
+          steps_per_epoch=len(x_train) / 64,
+          validation_data=(x_test, y_test),
+          epochs=30)
 
-    model.compile(optimizer=K.optimizers.Adam(lr=2e-5),
-                  loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-
-    history = model.fit(x_train, y_train, epochs=1, batch_size=32,
-                        validation_data=(x_test, y_test))
-
-    model.save('cifar10.h5')
+# Save the trained model
+model.save('cifar10_efficientnetb0.h5')
