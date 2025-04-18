@@ -179,7 +179,5 @@ class GaussianProcess:
 
         self.X = np.concatenate((self.X, X_new[..., np.newaxis]), axis=0)
         self.Y = np.concatenate((self.Y, Y_new[..., np.newaxis]), axis=0)
-
-
         # Add the new function value
         self.K = self.kernel(self.X, self.X)
