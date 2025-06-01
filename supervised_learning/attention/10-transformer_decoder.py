@@ -6,7 +6,6 @@ positional_encoding = __import__('4-positional_encoding').positional_encoding
 DecoderBlock = __import__('8-transformer_decoder_block').DecoderBlock
 
 
-
 class Decoder(tf.keras.layers.Layer):
     """
     This class represents an transformer's Decoder.

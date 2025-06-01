@@ -38,43 +38,8 @@ class DecoderBlock(tf.keras.layers.Layer):
         # set the dropout layer
         self.dropout2 = tf.keras.layers.Dropout(drop_rate)
         # set the dropout layer
-        self.dropout3 = tf.keras.layers.Dropout(drop_rate)
+        self.dropout3 = tf.keras.layers.Dropout(drop_rate)\
 
-    # def call(self, x, encoder_output, training, look_ahead_mask, padding_mask):
-    #     """This method calls the decoder block
-    #         Args:
-    #             x (tf.Tensor): contains the input to the decoder block
-    #             encoder_output (tf.Tensor): contains the output of the encoder
-    #             training (bool): determines if the model is in training
-    #             look_ahead_mask (tf.Tensor): contains the mask to be applied to
-    #             the first multi head attention layer
-    #             padding_mask (tf.Tensor): contains the mask to be applied to
-    #             the second multi head attention layer
-    #         Returns:
-    #             (tf.Tensor): contains the block's output
-    #     """
-    #     # call the first multi head attention layer
-    #     attn1, _ = self.mha1(x, x, x, look_ahead_mask)
-    #     # apply dropout layer
-    #     attn1 = self.dropout1(attn1, training=training)
-    #     # apply layer normalization
-    #     out1 = self.layernorm1(x + attn1)
-    #     # call the second multi head attention layer
-    #     attn2, _ = self.mha2(
-    #         out1, encoder_output, encoder_output, padding_mask)
-    #     # apply dropout layer
-    #     attn2 = self.dropout2(attn2, training=training)
-    #     # apply layer normalization
-    #     out2 = self.layernorm2(out1 + attn2)
-    #     # call the dense hidden layer
-    #     ffn_output = self.dense_hidden(out2)
-    #     # call the dense output layer
-    #     ffn_output = self.dense_output(ffn_output)
-    #     # apply dropout layer
-    #     ffn_output = self.dropout3(ffn_output, training=training)
-    #     # apply layer normalization
-    #     out3 = self.layernorm3(out2 + ffn_output)
-    #     return out3
 
     def call(self, x, encoder_output, training, look_ahead_mask, padding_mask):
         """
