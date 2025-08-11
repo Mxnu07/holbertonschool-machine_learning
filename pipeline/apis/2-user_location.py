@@ -15,7 +15,11 @@ def get_user_location(api_url):
     If rate-limited (403), print the time to reset in minutes.
     If the user exists, print the user's location or 'No location found'.
     """
-    response = requests.get(api_url)
+    try:
+        response = requests.get(api_url)
+    except requests.exceptions.ConnectionError:
+        print("Not found")
+        return
 
     # If user does not exist (404)
     if response.status_code == 404:

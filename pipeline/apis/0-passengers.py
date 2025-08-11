@@ -2,6 +2,10 @@
 """This modlue Uses swap api to return a list fo ships that can carry a
 given number of passengers"""
 import requests
+import urllib3
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def availableShips(passengerCount):
@@ -20,7 +24,7 @@ def availableShips(passengerCount):
     # Loop to paginate through all pages of the API response
     while url:
         # Send a GET request to the current URL
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         # Check if the request was successful
         if response.status_code != 200:
             break
